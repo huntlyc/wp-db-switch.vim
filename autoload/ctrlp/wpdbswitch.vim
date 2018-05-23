@@ -71,7 +71,8 @@ call add(g:ctrlp_ext_vars, {
 " Return: a Vim's List
 "
 function! ctrlp#wpdbswitch#init()
-  let input = system('grep -r "define(.DB" wp-config.php')
+  let configFile = '//home/huntly/Downloads/WordPress/wp-config.php'
+  let input = split(system('grep -r "define(.DB" ' . configFile), '\n')
 	return input
 endfunction
 
@@ -84,9 +85,24 @@ endfunction
 "  a:str    the selected string
 "
 function! ctrlp#wpdbswitch#accept(mode, str)
+  let configFile = '//home/huntly/Downloads/WordPress/wp-config.php'
 	" For this example, just exit ctrlp and run help
+
+  " comment all dbs
+  "  sed -e "s/^define('DB_NAME/\/\/define('DB_NAME/g" wp-config.php
+  let deactivateAllSed = 'sed -e "s/^define(''DB_NAME/\/\/define(''DB_NAME/g" ' . configFile . ' > ' . configFile
+  cal system(deactivateAllSed)
+
+
+
+
+  system('cp -f ' . configfile . ' '. configfile . '.bak')
+  " uncomment our example
+  let activateSed = 'sed -e "s/^' . escape(a:str, '/') . '/' . trim(strpart(a:str, 2)) . '/g" ' . configFile . ' > ' . configFile
+  " echo activateSed
+  cal system(activateSed)
+  " echo a:str
 	call ctrlp#exit()
-	help ctrlp-extensions
 endfunction
 
 
